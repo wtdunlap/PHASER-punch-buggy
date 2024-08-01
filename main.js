@@ -17,12 +17,14 @@ class GameScene extends Phaser.Scene {
         this.chosenCar = [];
 
         // text and score
-        this.wins;
-        this.losses;
+        this.wins = 0;
+        this.losses = 0;
+        this.textScore;
 
         // utlity
         this.timeline;
         this.workingArray;
+        this.toggle;
     }
 
     preload() {
@@ -37,6 +39,10 @@ class GameScene extends Phaser.Scene {
         // pause the game until start button is pressed
         // this.scene.pause("scene-game");
 
+        this.texScore = this.add.text(10, 10, "wins: 0\nlosses: 0", {
+            font: "25px Arial",
+            fill: "#000000",
+        }).setDepth(11);
         this.add
             .image(-425, -60, "window")
             .setOrigin(0, 0)
@@ -94,14 +100,58 @@ class GameScene extends Phaser.Scene {
         this.timeline = timeline;
 
         // setup input
-        this.cursorKeys = this.input.keyboard.createCursorKeys();
+        // toggle to true on pointer down then check
+        // to see if car is in given range on x axis
+        // then check to see if the car is yellow
+        // then increment winning if yellow else
+        // losing
+        this.input.on("pointerdown", () => {
+            this.toggle = true;
+            if (this.toggle) {
+                if (this.chosenCar[0].x >= 400 && this.chosenCar[0].x <= 700) {
+                    if (this.chosenCar[0].texture.key === "yellow") {
+                        this.wins = this.wins + 1;
+                        this.texScore.setText(`wins: ${this.wins}\nlosses: ${this.losses}`);
+                        this.toggle = false;
+                    } else {
+                        this.losses = this.losses + 1;
+                        this.texScore.setText(`wins: ${this.wins}\nlosses: ${this.losses}`);
+                        this.toggle = false;
+                    }
+                }
+                if (this.chosenCar[1].x >= 400 && this.chosenCar[1].x <= 700) {
+                    if (this.chosenCar[1].texture.key === "yellow") {
+                        this.wins = this.wins + 1;
+                        this.texScore.setText(`wins: ${this.wins}\nlosses: ${this.losses}`);
+                        this.toggle = false;
+                    } else {
+                        this.losses = this.losses + 1;
+                        this.texScore.setText(`wins: ${this.wins}\nlosses: ${this.losses}`);
+                        this.toggle = false;
+                    }
+                }
+                if (this.chosenCar[2].x >= 400 && this.chosenCar[2].x <= 700) {
+                    if (this.chosenCar[2].texture.key === "yellow") {
+                        this.wins = this.wins + 1;
+                        this.texScore.setText(`wins: ${this.wins}\nlosses: ${this.losses}`);
+                        this.toggle = false;
+                    } else {
+                        this.losses = this.losses + 1;
+                        this.texScore.setText(`wins: ${this.wins}\nlosses: ${this.losses}`);
+                        this.toggle = false;
+                    }
+                }
+            } else {
+                this.toggle = false;
+            }
+        });
     }
 
     // runs every step
     update() {
-        while (this.losses < 3) {
-            this.timeline.stop;
-            this.gameOver();
+        if (this.losses >= 3) {
+            console.log("loss");
+            this.timeline.stop();
         }
 
         // keeps the loop running
@@ -159,7 +209,7 @@ class GameScene extends Phaser.Scene {
 }
 
 const config = {
-    type: Phaser.WEBGL,
+    type: Phaser.CANVAS,
     width: sizes.width,
     height: sizes.height,
     backgroundColor: "#a4e3f4",
@@ -168,7 +218,7 @@ const config = {
         default: "arcade",
         arcade: {
             gravity: { x: 0 },
-            debug: true,
+            debug: false,
         },
     },
     scene: [GameScene],
